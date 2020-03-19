@@ -20,7 +20,6 @@ public class BrandController {
     //第一天 查询所有品牌
     @GetMapping("/brand/findAll")
     public List<Brand> findAll(){
-        System.out.println(brandService);
         return brandService.findAll();
     }
 }
