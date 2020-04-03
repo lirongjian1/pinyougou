@@ -1,6 +1,8 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.Brand;
 import com.pinyougou.mapper.BrandMapper;
 import com.pinyougou.service.BrandService;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
+
 /**
  * BrandServiceImpl 服务接口实现类
  * @date 2020-03-23 19:16:17
@@ -49,17 +53,11 @@ public class BrandServiceImpl implements BrandService {
 
 	/** 批量删除 */
 	public void deleteAll(Serializable[] ids){
+
 		try {
-			// 创建示范对象
-			Example example = new Example(Brand.class);
-			// 创建条件对象
-			Example.Criteria criteria = example.createCriteria();
-			// 创建In条件
-			criteria.andIn("id", Arrays.asList(ids));
-			// 根据示范对象删除
-			brandMapper.deleteByExample(example);
-		}catch (Exception ex){
-			throw new RuntimeException(ex);
+			brandMapper.deleteAll(ids);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -73,25 +71,25 @@ public class BrandServiceImpl implements BrandService {
 	}
 
 	/** 查询全部 */
-	public List<Brand> findAll(){
+	public List<Map<String,Object>>findAll(){
 		try {
-			return brandMapper.selectAll();
+			return brandMapper.findBrand();
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
 
-	/** 多条件分页查询 */
-	public List<Brand> findByPage(Brand brand, int page, int rows){
+	/** day3 多条件分页查询 */
+	public PageResult findByPage(Brand brand, Integer page, Integer rows){
 		try {
 			PageInfo<Brand> pageInfo = PageHelper.startPage(page, rows)
 				.doSelectPageInfo(new ISelect() {
 					@Override
 					public void doSelect() {
-						brandMapper.selectAll();
+						brandMapper.findAll(brand);
 					}
 				});
-			return pageInfo.getList();
+			return new PageResult(pageInfo.getTotal(),pageInfo.getList());
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}

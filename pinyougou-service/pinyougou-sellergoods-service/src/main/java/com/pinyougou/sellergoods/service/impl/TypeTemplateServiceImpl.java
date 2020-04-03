@@ -1,5 +1,7 @@
 package com.pinyougou.sellergoods.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.TypeTemplate;
 import com.pinyougou.mapper.TypeTemplateMapper;
 import com.pinyougou.service.TypeTemplateService;
@@ -8,14 +10,19 @@ import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
+
 /**
  * TypeTemplateServiceImpl 服务接口实现类
  * @date 2020-03-23 19:16:17
  * @version 1.0
  */
+@Service(interfaceName = "com.pinyougou.service.TypeTemplateService")
+@Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
@@ -32,6 +39,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	/** 修改方法 */
 	public void update(TypeTemplate typeTemplate){
+		//这个方法会根据id去修改数据
 		try {
 			typeTemplateMapper.updateByPrimaryKeySelective(typeTemplate);
 		}catch (Exception ex){
@@ -51,14 +59,8 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	/** 批量删除 */
 	public void deleteAll(Serializable[] ids){
 		try {
-			// 创建示范对象
-			Example example = new Example(TypeTemplate.class);
-			// 创建条件对象
-			Example.Criteria criteria = example.createCriteria();
-			// 创建In条件
-			criteria.andIn("id", Arrays.asList(ids));
-			// 根据示范对象删除
-			typeTemplateMapper.deleteByExample(example);
+
+			typeTemplateMapper.deleteAll(ids);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
@@ -83,19 +85,25 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	}
 
 	/** 多条件分页查询 */
-	public List<TypeTemplate> findByPage(TypeTemplate typeTemplate, int page, int rows){
+	public PageResult findByPage(TypeTemplate typeTemplate, int page, int rows){
 		try {
 			PageInfo<TypeTemplate> pageInfo = PageHelper.startPage(page, rows)
 				.doSelectPageInfo(new ISelect() {
 					@Override
 					public void doSelect() {
-						typeTemplateMapper.selectAll();
+						typeTemplateMapper.findAll(typeTemplate);
 					}
 				});
-			return pageInfo.getList();
+			return new PageResult(pageInfo.getTotal(),pageInfo.getList());
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
+	}
+
+    //查询模板表格 要获取它的id和name 要根据id添加分类商品 name显示给用看
+	@Override
+	public List<Map<String, Object>> findTypeTemplateList() {
+		return typeTemplateMapper.findTypeTemplateList();
 	}
 
 }

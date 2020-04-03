@@ -1,5 +1,6 @@
 package com.pinyougou.sellergoods.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.pinyougou.pojo.ItemCat;
 import com.pinyougou.mapper.ItemCatMapper;
 import com.pinyougou.service.ItemCatService;
@@ -8,6 +9,7 @@ import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -16,10 +18,18 @@ import java.util.Arrays;
  * @date 2020-03-23 19:16:17
  * @version 1.0
  */
+@Service(interfaceName ="com.pinyougou.service.ItemCatService")
+@Transactional
 public class ItemCatServiceImpl implements ItemCatService {
 
 	@Autowired
 	private ItemCatMapper itemCatMapper;
+
+
+	@Override
+	public List<ItemCat> findModule(Integer parentId) {
+		return itemCatMapper.findModule(parentId);
+	}
 
 	/** 添加方法 */
 	public void save(ItemCat itemCat){
@@ -51,14 +61,8 @@ public class ItemCatServiceImpl implements ItemCatService {
 	/** 批量删除 */
 	public void deleteAll(Serializable[] ids){
 		try {
-			// 创建示范对象
-			Example example = new Example(ItemCat.class);
-			// 创建条件对象
-			Example.Criteria criteria = example.createCriteria();
-			// 创建In条件
-			criteria.andIn("id", Arrays.asList(ids));
-			// 根据示范对象删除
-			itemCatMapper.deleteByExample(example);
+
+			itemCatMapper.deleteAll(ids);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
@@ -97,5 +101,7 @@ public class ItemCatServiceImpl implements ItemCatService {
 			throw new RuntimeException(ex);
 		}
 	}
+
+
 
 }

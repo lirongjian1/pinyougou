@@ -1,8 +1,11 @@
 package com.pinyougou.service;
 
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.Brand;
 import java.util.List;
 import java.io.Serializable;
+import java.util.Map;
+
 /**
  * BrandService 服务接口
  * @date 2020-03-23 19:16:17
@@ -26,9 +29,8 @@ public interface BrandService {
 	Brand findOne(Serializable id);
 
 	/** 查询全部 */
-	List<Brand> findAll();
+	List<Map<String,Object>> findAll();
 
 	/** 多条件分页查询 */
-	List<Brand> findByPage(Brand brand, int page, int rows);
-
+	PageResult findByPage(Brand brand, Integer page, Integer rows);
 }
