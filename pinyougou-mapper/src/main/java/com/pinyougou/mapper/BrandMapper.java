@@ -25,4 +25,6 @@ public interface BrandMapper extends Mapper<Brand>{
   //查询所有品牌只需要返回两类数据{ id:1,text:"手机"} 所有用map封装
   @Select(" select id,name as text from tb_brand")
     List<Map<String,Object>> findBrand();
+
+    List<Brand> findByName(char[] name);
 }

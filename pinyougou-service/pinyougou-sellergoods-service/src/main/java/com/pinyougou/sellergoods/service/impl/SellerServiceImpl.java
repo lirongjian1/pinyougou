@@ -1,13 +1,20 @@
 package com.pinyougou.sellergoods.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.Seller;
 import com.pinyougou.mapper.SellerMapper;
+import com.pinyougou.pojo.User;
 import com.pinyougou.service.SellerService;
+
+import java.util.Date;
 import java.util.List;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -16,19 +23,62 @@ import java.util.Arrays;
  * @date 2020-03-23 19:16:17
  * @version 1.0
  */
+@Service(interfaceName = "com.pinyougou.service.SellerService")
+@Transactional
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private SellerMapper sellerMapper;
 
-	/** 添加方法 */
+	@Override
+	public Seller findById(String username) {
+		return sellerMapper.findById(username);
+	}
+
+	//根据商家id 修改它的状态码
+	@Override
+	public void updateStatus(String sellerId, String status) {
+		 try {
+			 Seller seller = new Seller();
+			 seller.setSellerId(sellerId);
+			 seller.setStatus(status);
+			 sellerMapper.updateByPrimaryKeySelective(seller);
+		         } catch (Exception e) {
+		             throw new RuntimeException(e);
+		         }
+	}
+
+
+
+	/** 注册商家 */
 	public void save(Seller seller){
 		try {
-			sellerMapper.insertSelective(seller);
+			//设置状态码 审核是否通过的码 设置注册时间
+			seller.setStatus("0");
+			seller.setCreateTime(new Date());
+			System.out.println(seller);
+			sellerMapper.insert(seller);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
+
+	/** 多条件分页查询 */
+	public PageResult findByPage(Seller seller, int page, int rows){
+		try {
+			PageInfo<Object> pageInfo = PageHelper.startPage(page, rows).doSelectPageInfo(new ISelect() {
+				@Override
+				public void doSelect() {
+					sellerMapper.findByPage(seller);
+				}
+			});
+			return new PageResult(pageInfo.getTotal(),pageInfo.getList());
+		}catch (Exception ex){
+			throw new RuntimeException(ex);
+		}
+	}
+
+
 
 	/** 修改方法 */
 	public void update(Seller seller){
@@ -77,22 +127,6 @@ public class SellerServiceImpl implements SellerService {
 	public List<Seller> findAll(){
 		try {
 			return sellerMapper.selectAll();
-		}catch (Exception ex){
-			throw new RuntimeException(ex);
-		}
-	}
-
-	/** 多条件分页查询 */
-	public List<Seller> findByPage(Seller seller, int page, int rows){
-		try {
-			PageInfo<Seller> pageInfo = PageHelper.startPage(page, rows)
-				.doSelectPageInfo(new ISelect() {
-					@Override
-					public void doSelect() {
-						sellerMapper.selectAll();
-					}
-				});
-			return pageInfo.getList();
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}

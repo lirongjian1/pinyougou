@@ -1,6 +1,9 @@
 package com.pinyougou.service;
 
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.Seller;
+import com.pinyougou.pojo.User;
+
 import java.util.List;
 import java.io.Serializable;
 /**
@@ -29,6 +32,12 @@ public interface SellerService {
 	List<Seller> findAll();
 
 	/** 多条件分页查询 */
-	List<Seller> findByPage(Seller seller, int page, int rows);
+	PageResult findByPage(Seller seller, int page, int rows);
 
+    void updateStatus(String sellerId, String status);
+
+	static void findByKey(String username) {
+	}
+
+	Seller findById(String username);
 }

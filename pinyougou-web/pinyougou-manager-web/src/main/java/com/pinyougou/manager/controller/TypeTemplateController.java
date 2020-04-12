@@ -2,6 +2,7 @@ package com.pinyougou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.common.pojo.PageResult;
+import com.pinyougou.manager.util.StringUtil;
 import com.pinyougou.pojo.TypeTemplate;
 import com.pinyougou.service.TypeTemplateService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +30,8 @@ public class TypeTemplateController {
     @GetMapping("findByPage")
     public PageResult findByPage(TypeTemplate typeTemplate, Integer page, Integer rows){
         //GET 请求中文转码
-        if (typeTemplate != null && StringUtils.isNoneBlank(typeTemplate.getName())){
-            try {
-                typeTemplate.setName(new String(typeTemplate.getName().getBytes("ISO8859-1"),"UTF-8"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (typeTemplate != null) {
+            typeTemplate.setName(StringUtil.iSO8859ToUTF8(typeTemplate.getName()));
         }
         return typeTemplateService.findByPage(typeTemplate,page,rows);
 

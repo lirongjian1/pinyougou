@@ -20,6 +20,17 @@
         order by id asc
     </select>
 
+    <!--测试-->
+    <select id="findByName" resultType="com.pinyougou.pojo.Brand">
+         select * from tb_brand
+        <where>
+         <foreach collection="array" item="name"  separator="or">
+             INSTR( name, '华测' )
+         </foreach>
+            > 0;
+        </where>
+    </select>
+
     <delete id="deleteAll" >
         delete from tb_brand where id in
         <foreach collection="array" item="id" open="(" separator="," close=")" >

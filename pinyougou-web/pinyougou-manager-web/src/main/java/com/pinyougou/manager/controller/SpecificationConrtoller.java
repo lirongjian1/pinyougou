@@ -2,6 +2,7 @@ package com.pinyougou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.common.pojo.PageResult;
+import com.pinyougou.manager.util.StringUtil;
 import com.pinyougou.pojo.Specification;
 import com.pinyougou.pojo.SpecificationOption;
 import com.pinyougou.service.SpecificationService;
@@ -20,26 +21,22 @@ public class SpecificationConrtoller {
 
     //查询所有规格
     @GetMapping("findAll")
-    public List<Map<String,Object>> findSpecification(){
+    public List<Map<String, Object>> findSpecification() {
         return specificationService.findSpecification();
     }
 
     @GetMapping("findByPage")
-    public PageResult findByPage(Specification specification,Integer page, Integer rows){
+    public PageResult findByPage(Specification specification, Integer page, Integer rows) {
         //GET 请求中文转码
-        if (specification != null && StringUtils.isNoneBlank(specification.getSpecName())){
-            try {
-                specification.setSpecName(new String(specification.getSpecName().getBytes("ISO8859-1"),"UTF-8"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (specification != null) {
+            specification.setSpecName(StringUtil.iSO8859ToUTF8(specification.getSpecName()));
         }
-        return specificationService.findByPage(specification,page,rows);
+        return specificationService.findByPage(specification, page, rows);
     }
 
     //day3 添加规格
     @PostMapping("save")
-    public boolean save(@RequestBody Specification specification){
+    public boolean save(@RequestBody Specification specification) {
         try {
             specificationService.save(specification);
             return true;
@@ -51,13 +48,13 @@ public class SpecificationConrtoller {
 
     //根据规格id查询规格选项
     @GetMapping("findSpecOption")
-    public List<SpecificationOption> findSpecOption(@RequestParam("id") long id){
-       return specificationService.findSpecOption(id);
+    public List<SpecificationOption> findSpecOption(@RequestParam("id") long id) {
+        return specificationService.findSpecOption(id);
     }
 
     //修改规格
     @PostMapping("update")
-    public boolean update(@RequestBody Specification specification){
+    public boolean update(@RequestBody Specification specification) {
         try {
             specificationService.update(specification);
             return true;
@@ -69,7 +66,7 @@ public class SpecificationConrtoller {
 
     //批量删除
     @GetMapping("delete")
-    public boolean delete(Integer[] ids){
+    public boolean delete(Integer[] ids) {
         try {
             specificationService.deleteAll(ids);
             return true;

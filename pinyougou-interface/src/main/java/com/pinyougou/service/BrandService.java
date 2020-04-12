@@ -33,4 +33,6 @@ public interface BrandService {
 
 	/** 多条件分页查询 */
 	PageResult findByPage(Brand brand, Integer page, Integer rows);
+
+    List<Brand> findByName(String name);
 }

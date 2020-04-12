@@ -95,4 +95,14 @@ public class BrandServiceImpl implements BrandService {
 		}
 	}
 
+	/**
+	 * 测试
+	 * @param name
+	 * @return
+	 */
+	@Override
+	public List<Brand> findByName(String name) {
+		char[] chars = name.toCharArray();
+		return brandMapper.findByName(chars);
+	}
 }

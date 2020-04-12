@@ -18,6 +18,25 @@ app.controller('sellerController', function($scope, $controller, baseService){
             });
     };
 
+    /** 显示修改 */
+    $scope.show = function(entity){
+        /** 把json对象转化成一个新的json对象 */
+        $scope.entity = JSON.parse(JSON.stringify(entity));
+    };
+
+    //根据sellerid 修改状态码
+    $scope.updateStatus = function (sellerId, status) {
+        baseService.sendGet("/seller/updateStatus?sellerId=" + sellerId + '&status=' + status )
+            .then(function (value) {
+            if (value.data){
+                //重新加载页面
+                $scope.reload();
+            } else {
+                alert("操作失败");
+            }
+
+        })
+    }
     /** 添加或修改 */
     $scope.saveOrUpdate = function(){
         var url = "save";
@@ -34,12 +53,6 @@ app.controller('sellerController', function($scope, $controller, baseService){
                     alert("操作失败！");
                 }
             });
-    };
-
-    /** 显示修改 */
-    $scope.show = function(entity){
-       /** 把json对象转化成一个新的json对象 */
-       $scope.entity = JSON.parse(JSON.stringify(entity));
     };
 
     /** 批量删除 */

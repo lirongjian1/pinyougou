@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class Goods implements Serializable{
 
 	private static final long serialVersionUID = -3888154864571208139L;
+
 	/** 主键 */
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
@@ -65,10 +66,10 @@ public class Goods implements Serializable{
     /** 是否删除 */
 	@Column(name="is_delete")
     private String isDelete;
-    /** 商品描述 */
+    /** 商品描述  import javax.persistence.*; */
 	@Transient
     private GoodsDesc goodsDesc;
-    /** 商品SKU列表 */
+    /** 商品SKU列表 import javax.persistence.*; */
 	@Transient
     private List<Item> items;
     

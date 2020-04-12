@@ -13,5 +13,13 @@
     <artifactId>pinyougou-common</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- apache工具组件 -->
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>

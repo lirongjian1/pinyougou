@@ -1,5 +1,6 @@
 package com.pinyougou.sellergoods.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.pinyougou.pojo.User;
 import com.pinyougou.mapper.UserMapper;
 import com.pinyougou.service.UserService;
@@ -8,6 +9,7 @@ import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -16,10 +18,16 @@ import java.util.Arrays;
  * @date 2020-03-23 19:16:17
  * @version 1.0
  */
+@Service(interfaceName = "com.pinyougou.service.UserService")
+@Transactional
 public class UserServiceImpl implements UserService {
+
+
+
 
 	@Autowired
 	private UserMapper userMapper;
+
 
 	/** 添加方法 */
 	public void save(User user){
@@ -97,5 +105,7 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException(ex);
 		}
 	}
+
+
 
 }
