@@ -1,4 +1,4 @@
-package com.pinyougou.manager.util;
+package com.pinyougou.shop.util;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -22,6 +22,7 @@ public class TypeTemplateController {
     private TypeTemplateService typeTemplateService;
 
 
+    //根据id查询类型模板
     @GetMapping("findOne")
     public TypeTemplate findItemCatByParentId(Long id){
         try {
@@ -30,4 +31,15 @@ public class TypeTemplateController {
             throw new RuntimeException(e);
         }
     }
+
+    //根据类型模板id查询对应的规格 以及规格选项 用List<Map>封装
+    @GetMapping("/findSpecByTemplateId")
+    public List<Map> findSpecByTemplateId(Integer id){
+        try {
+            return typeTemplateService.findSpecByTemplateId(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

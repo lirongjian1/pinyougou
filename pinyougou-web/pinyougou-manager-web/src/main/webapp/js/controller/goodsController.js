@@ -18,6 +18,42 @@ app.controller('goodsController', function($scope, $controller, baseService){
             });
     };
 
+    //修改状态码(0位审核 1通过 2 不通过)
+    $scope.updateStatus = function (status) {
+        if ($scope.ids.length > 0){
+        baseService.sendGet("/goods/updateStatus?ids=" + $scope.ids + "&status=" + status)
+            .then(function (value) {
+           if(value.data){
+               //刷新页面
+               $scope.reload();
+               //清空ids
+               $scope.ids=[];
+           }else {
+               alert("审核失败")
+           }
+        })
+        }else {
+           alert("请选中要审核的商品")
+        }
+    }
+
+    /** 批量删除 */
+    $scope.delete = function(){
+        if ($scope.ids.length > 0){
+            baseService.deleteById("/goods/delete", $scope.ids)
+                .then(function(response){
+                    if (response.data){
+                        /** 重新加载数据 */
+                        $scope.reload();
+                    }else{
+                        alert("删除失败！");
+                    }
+                });
+        }else{
+            alert("请选择要删除的记录！");
+        }
+    };
+
     /** 添加或修改 */
     $scope.saveOrUpdate = function(){
         var url = "save";
@@ -42,20 +78,5 @@ app.controller('goodsController', function($scope, $controller, baseService){
        $scope.entity = JSON.parse(JSON.stringify(entity));
     };
 
-    /** 批量删除 */
-    $scope.delete = function(){
-        if ($scope.ids.length > 0){
-            baseService.deleteById("/goods/delete", $scope.ids)
-                .then(function(response){
-                    if (response.data){
-                        /** 重新加载数据 */
-                        $scope.reload();
-                    }else{
-                        alert("删除失败！");
-                    }
-                });
-        }else{
-            alert("请选择要删除的记录！");
-        }
-    };
+
 });

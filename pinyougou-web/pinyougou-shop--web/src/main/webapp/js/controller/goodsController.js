@@ -4,6 +4,10 @@ app.controller('goodsController', function($scope, $controller, baseService){
     /** 指定继承baseController */
     $controller('baseController',{$scope:$scope});
 
+    /** 定义商品状态数组 */
+    $scope.status = ['未审核','已审核','审核未通过','关闭'];
+
+
     /** 添加或修改 */
     $scope.saveOrUpdate = function(){
         var url = "save";
@@ -37,7 +41,7 @@ app.controller('goodsController', function($scope, $controller, baseService){
     }
 
     //点击保存按钮 图片和图片颜色字眼 显示在一行上
-   $scope.goods={goodsDesc:{itemImages : []}};
+   $scope.goods={goodsDesc:{itemImages : [],specificationItems : []}};
     $scope.addPic = function () {
         $scope.goods.goodsDesc.itemImages.push($scope.picEntity)
 
@@ -112,20 +116,92 @@ app.controller('goodsController', function($scope, $controller, baseService){
                     JSON.parse(response.data.customAttributeItems);
                 console.log($scope.goods)
             });
+
+        /** 查询该模版对应的规格与规格选项 */
+        baseService.findOne("/typeTemplate/findSpecByTemplateId",newValue).then(function (value) {
+            $scope.specList =value.data;
+        })
     });
 
 
+    /** 定义修改规格选项方法 */
+    $scope.updateSpecAttr = function($event, name, value){
+        /** 根据json对象的key到json数组中搜索该key值对应的对象 */
+        var obj = $scope.searchJsonByKey($scope.goods.goodsDesc
+            .specificationItems,'attributeName', name);
+        /** 判断对象是否为空 */
+        if(obj){
+            /** 判断checkbox是否选中 */
+            if($event.target.checked){
+                /** 添加该规格选项到数组中 */
+                obj.attributeValue.push(value);
+            }else{
+                /** 取消勾选，从数组中删除该规格选项 */
+                obj.attributeValue.splice(obj.attributeValue
+                    .indexOf(value), 1);
+                /** 如果选项都取消了，将此条记录删除 */
+                if(obj.attributeValue.length == 0){
+                    $scope.goods.goodsDesc.specificationItems.splice(
+                        $scope.goods.goodsDesc
+                            .specificationItems.indexOf(obj),1);
+                }
+            }
+        }else{
+            /** 如果为空，则新增数组元素 */
+            $scope.goods.goodsDesc.specificationItems.push(
+                {"attributeName":name,"attributeValue":[value]});
+        }
+    };
 
+    /** 从json数组中根据key查询指定的json对象 */
+    $scope.searchJsonByKey = function(jsonArr, key, value){
+        /** 迭代json数组 */
+        for(var i = 0; i < jsonArr.length; i++){
+            if(jsonArr[i][key] == value){
+                return jsonArr[i];
+            }
+        }
+    };
 
+    /** 定义SKU数组变量，并初始化 */
+    $scope.goods.items = [{spec:{}, price:0, num:9999,
+        status:'0', isDefault:'0'}];
 
-
-
-
-
-
-
-
-
+    /** 创建SKU商品方法 */
+    $scope.createItems = function(){
+        /** 定义SKU数组，并初始化 */
+        $scope.goods.items = [{spec:{}, price:0, num:9999,
+            status:'0', isDefault:'0' }];
+        /** 定义选中的规格选项数组 */
+        var specItems = $scope.goods.goodsDesc.specificationItems;
+        /** 循环选中的规格选项数组 */
+        for(var i = 0; i < specItems.length; i++){
+            /** 扩充原SKU数组方法 */
+            $scope.goods.items = swapItems($scope.goods.items,
+                specItems[i].attributeName,
+                specItems[i].attributeValue);
+        }
+    };
+    /** 扩充SKU数组方法 */
+    var swapItems = function(items, attributeName, attributeValue){
+        /** 创建新的SKU数组 */
+        var newItems = new Array();
+        /** 迭代旧的SKU数组，循环扩充 */
+        for(var i = 0; i < items.length; i++){
+            /** 获取一个SKU商品 */
+            var item = items[i];
+            /** 迭代规格选项值数组 */
+            for(var j = 0; j < attributeValue.length; j++){
+                /** 克隆旧的SKU商品，产生新的SKU商品 */
+                var newItem = JSON.parse(JSON.stringify(item));
+                /** 增加新的key与value */
+                newItem.spec[attributeName] = attributeValue[j];
+                /** 添加到新的SKU数组 */
+                newItems.push(newItem);
+            }
+        }
+        return newItems;
+    };
 
     /** 查询条件对象 */
     $scope.searchEntity = {};
@@ -140,6 +216,23 @@ app.controller('goodsController', function($scope, $controller, baseService){
                 $scope.paginationConf.totalItems = response.data.total;
             });
     };
+
+    //商品上下架
+    $scope.updateMarketable = function (marketable) {
+        if($scope.ids.length>0){
+            baseService.sendGet("/goods/updateMarketable?ids=" + $scope.ids + "&marketable=" + marketable)
+                .then(function (value) {
+                    if (value.data){
+                        //刷新页面
+                        $scope.reload();
+                        //清空ids数组
+                        $scope.ids=[];
+                    }
+                })
+        }else {
+            alert("请先选中需要操作的商品")
+        }
+    }
 
     /** 显示修改 */
     $scope.show = function(entity){
