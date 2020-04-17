@@ -1,7 +1,11 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.pinyougou.common.pojo.PageResult;
+import com.pinyougou.mapper.SpecificationOptionMapper;
+import com.pinyougou.pojo.SpecificationOption;
 import com.pinyougou.pojo.TypeTemplate;
 import com.pinyougou.mapper.TypeTemplateMapper;
 import com.pinyougou.service.TypeTemplateService;
@@ -27,6 +31,31 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TypeTemplateMapper typeTemplateMapper;
+	@Autowired
+	private SpecificationOptionMapper specificationOptionMapper;
+
+
+	//根据类型模板id查询对应的规格 以及规格选项 用List<Map>封装
+	@Override
+	public List<Map> findSpecByTemplateId(Integer id) {
+		try {
+			long id2 = id.longValue();
+			TypeTemplate typeTemplate = typeTemplateMapper.selectByPrimaryKey(id2);
+			String specIds = typeTemplate.getSpecIds();
+			List<Map> listMap = JSON.parseArray(specIds, Map.class);
+			//根据类型模板的的SpecIds中的id查询规格选项
+			for (Map map : listMap) {
+				SpecificationOption specificationOption = new SpecificationOption();
+				//先把得到的id转成字符串 再转包装类
+				specificationOption.setSpecId(Long.valueOf(map.get("id").toString()));
+				List<SpecificationOption> options = specificationOptionMapper.select(specificationOption);
+				map.put("options",options);
+			}
+			return listMap;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/** 添加方法 */
 	public void save(TypeTemplate typeTemplate){
@@ -105,5 +134,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	public List<Map<String, Object>> findTypeTemplateList() {
 		return typeTemplateMapper.findTypeTemplateList();
 	}
+
+
 
 }

@@ -1,39 +1,44 @@
-package com.pinyougou.sellergoods.service.impl;
+package com.pinyougou.content.service.impl;
 
-import com.pinyougou.pojo.ContentCategory;
-import com.pinyougou.mapper.ContentCategoryMapper;
-import com.pinyougou.service.ContentCategoryService;
+import com.alibaba.dubbo.config.annotation.Service;
+import com.pinyougou.common.pojo.PageResult;
+import com.pinyougou.pojo.Content;
+import com.pinyougou.mapper.ContentMapper;
+import com.pinyougou.service.ContentService;
 import java.util.List;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.util.Arrays;
 /**
- * ContentCategoryServiceImpl 服务接口实现类
+ * ContentServiceImpl 服务接口实现类
  * @date 2020-03-23 19:16:17
  * @version 1.0
  */
-public class ContentCategoryServiceImpl implements ContentCategoryService {
+@Service(interfaceName = "com.pinyougou.service.ContentService")
+@Transactional
+public class ContentServiceImpl implements ContentService {
 
 	@Autowired
-	private ContentCategoryMapper contentCategoryMapper;
+	private ContentMapper contentMapper;
 
 	/** 添加方法 */
-	public void save(ContentCategory contentCategory){
+	public void save(Content content){
 		try {
-			contentCategoryMapper.insertSelective(contentCategory);
+			contentMapper.insertSelective(content);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
 
 	/** 修改方法 */
-	public void update(ContentCategory contentCategory){
+	public void update(Content content){
 		try {
-			contentCategoryMapper.updateByPrimaryKeySelective(contentCategory);
+			contentMapper.updateByPrimaryKeySelective(content);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
@@ -42,7 +47,7 @@ public class ContentCategoryServiceImpl implements ContentCategoryService {
 	/** 根据主键id删除 */
 	public void delete(Serializable id){
 		try {
-			contentCategoryMapper.deleteByPrimaryKey(id);
+			contentMapper.deleteByPrimaryKey(id);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
@@ -52,47 +57,47 @@ public class ContentCategoryServiceImpl implements ContentCategoryService {
 	public void deleteAll(Serializable[] ids){
 		try {
 			// 创建示范对象
-			Example example = new Example(ContentCategory.class);
+			Example example = new Example(Content.class);
 			// 创建条件对象
 			Example.Criteria criteria = example.createCriteria();
 			// 创建In条件
 			criteria.andIn("id", Arrays.asList(ids));
 			// 根据示范对象删除
-			contentCategoryMapper.deleteByExample(example);
+			contentMapper.deleteByExample(example);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
 
 	/** 根据主键id查询 */
-	public ContentCategory findOne(Serializable id){
+	public Content findOne(Serializable id){
 		try {
-			return contentCategoryMapper.selectByPrimaryKey(id);
+			return contentMapper.selectByPrimaryKey(id);
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
 
 	/** 查询全部 */
-	public List<ContentCategory> findAll(){
+	public List<Content> findAll(){
 		try {
-			return contentCategoryMapper.selectAll();
+			return contentMapper.selectAll();
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}
 	}
 
 	/** 多条件分页查询 */
-	public List<ContentCategory> findByPage(ContentCategory contentCategory, int page, int rows){
+	public PageResult findByPage(Content content, int page, int rows){
 		try {
-			PageInfo<ContentCategory> pageInfo = PageHelper.startPage(page, rows)
+			PageInfo<Content> pageInfo = PageHelper.startPage(page, rows)
 				.doSelectPageInfo(new ISelect() {
 					@Override
 					public void doSelect() {
-						contentCategoryMapper.selectAll();
+						contentMapper.selectAll();
 					}
 				});
-			return pageInfo.getList();
+			return new PageResult(pageInfo.getTotal(),pageInfo.getList());
 		}catch (Exception ex){
 			throw new RuntimeException(ex);
 		}

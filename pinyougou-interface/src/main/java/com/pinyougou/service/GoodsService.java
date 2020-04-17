@@ -1,8 +1,11 @@
 package com.pinyougou.service;
 
+import com.pinyougou.common.pojo.PageResult;
 import com.pinyougou.pojo.Goods;
 import java.util.List;
 import java.io.Serializable;
+import java.util.Map;
+
 /**
  * GoodsService 服务接口
  * @date 2020-03-23 19:16:17
@@ -29,6 +32,9 @@ public interface GoodsService {
 	List<Goods> findAll();
 
 	/** 多条件分页查询 */
-	List<Goods> findByPage(Goods goods, int page, int rows);
+	PageResult findByPage(Goods goods, int page, int rows);
 
+	void updateStatus(String columnName,Long[] ids, Integer status);
+
+	void updateMarketable(Long[] ids, String marketable);
 }
