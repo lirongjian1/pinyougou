@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://java.sun.com/xml/ns/javaee"
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+       http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+		 version="3.0">
+
+
+	<!-- 配置Spring MVC前端控制器(核心控制器) -->
+	<servlet>
+		<servlet-name>pinyougou</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:springmvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>pinyougou</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+
+	<!-- 配置全局编码过滤器 不需要配置编码过滤器 因为浏览器不需要传参数到后台 把web文件里面的拦截路径修改成*.html
+	只有这种格式的地址才能访问后台 后台返回给前端的页面是试图页面 不是json格式了-->
+	<!--<filter>-->
+		<!--<filter-name>characterEncodingFilter</filter-name>-->
+		<!--<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>-->
+		<!--<init-param>-->
+			<!--<param-name>encoding</param-name>-->
+			<!--<param-value>UTF-8</param-value>-->
+		<!--</init-param>-->
+	<!--</filter>-->
+    <!--<filter-mapping>-->
+		<!--<filter-name>characterEncodingFilter</filter-name>-->
+		<!--<url-pattern>/*</url-pattern>-->
+	<!--</filter-mapping>-->
+	<!---->
+	<!--<filter>-->
+		<!--<filter-name>filterChainProxy</filter-name>-->
+		<!--<filter-class>org.springframework.security.web.FilterChainProxy</filter-class>-->
+	<!--</filter>-->
+	<!--<filter-mapping>-->
+        <!--<filter-name>filterChainProxy</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
+
+    <!-- 欢迎列表 -->
+	<!--<welcome-file-list>-->
+		<!--<welcome-file>item.html</welcome-file>-->
+	<!--</welcome-file-list>-->
+</web-app>

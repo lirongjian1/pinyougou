@@ -9,12 +9,14 @@
        http://www.springframework.org/schema/context/spring-context.xsd
        http://code.alibabatech.com/schema/dubbo
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
-    <!-- 配置加载属性文件 -->
+    <!-- 配置mysql加载属性文件 还要加载common里面的redis配置文件 要path后面加* props/后面加*-->
     <context:property-placeholder
-            location="classpath:props/db.properties"/>
+            location="classpath*:props/*.properties"/>
 
     <!-- 导入数据访问配置文件 -->
     <import resource="classpath:applicationContext-mapper.xml"/>
+    <!--在spring主要配置文件中导入 spring-data-redis整合Jedis操作redis数据库的配置文-->
+    <import resource="classpath:applicationContext-redis.xml"/>
 
     <!-- ############## 配置dubbo服务提供者 ############## -->
     <!-- 配置当前应用的名称 -->

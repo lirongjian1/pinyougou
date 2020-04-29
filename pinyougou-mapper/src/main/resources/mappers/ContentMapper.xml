@@ -5,4 +5,7 @@
 
 <mapper namespace="com.pinyougou.mapper.ContentMapper">
 
+    <select id="findContentByCategoryId" resultType="com.pinyougou.pojo.Content">
+		select * from tb_content where category_id = #{categoryId} and  status = 1 order by sort_order asc;
+	</select>
 </mapper>

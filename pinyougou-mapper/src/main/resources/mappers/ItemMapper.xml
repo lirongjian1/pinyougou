@@ -5,4 +5,11 @@
 
 <mapper namespace="com.pinyougou.mapper.ItemMapper">
 
+    <select id="findAll" resultType="com.pinyougou.pojo.Item">
+		select * from tb_item where status=#{s}
+	</select>
+	<!--根据goodsId 查询item表对应的数据有多条-->
+    <select id="findItemListByGoodsId" resultType="com.pinyougou.pojo.Item">
+		select * from tb_item where status=1 AND goods_id=#{goodsId} order by is_default ASC
+	</select>
 </mapper>

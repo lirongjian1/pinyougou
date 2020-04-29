@@ -37,4 +37,6 @@ public interface GoodsService {
 	void updateStatus(String columnName,Long[] ids, Integer status);
 
 	void updateMarketable(Long[] ids, String marketable);
+
+    Map<String,Object> getGoods(Long goodsId);
 }

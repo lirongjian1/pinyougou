@@ -101,6 +101,31 @@ public class GoodsServiceImpl implements GoodsService {
 		}
 	}
 
+	//Freemarker  {"goods":goods,"goodsDesc":goodsDesc}
+	@Override
+	public Map<String, Object> getGoods(Long goodsId) {
+		Map<String,Object> map = new HashMap<>();
+		//根据goodsId 查询goods表对应的数据
+		Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
+		//根据goodsId 查询goods_desc表对应的数据
+		GoodsDesc goodsDesc = goodsDescMapper.selectByPrimaryKey(goodsId);
+		//根据goodsId 查询item表对应的数据有多条
+		List<Item> itemList = itemMapper.findItemListByGoodsId(goodsId);
+		map.put("goods",goods);
+		map.put("goodsDesc",goodsDesc);
+		map.put("itemList",JSON.toJSONString(itemList));
+        if (goods != null && goods.getCategory3Id()!=null){
+        //根据goodsid 查询三级分类 得到其名称
+        String category1Id = itemCatMapper.selectByPrimaryKey(goods.getCategory1Id()).getName();
+        String category2Id = itemCatMapper.selectByPrimaryKey(goods.getCategory2Id()).getName();
+        String category3Id = itemCatMapper.selectByPrimaryKey(goods.getCategory3Id()).getName();
+        map.put("category1Id",category1Id);
+        map.put("category2Id",category2Id);
+        map.put("category3Id",category3Id);
+        }
+        return map;
+	}
+
 	//修改状态码(0位审核 1通过 2 不通过)
 	@Override
 	public void updateStatus(String columnName,Long[] ids, Integer status) {
@@ -120,6 +145,8 @@ public class GoodsServiceImpl implements GoodsService {
 			e.printStackTrace();
 		}
 	}
+
+
 
 	/** 批量删除(逻辑删除 只是对goods表中的iddelete的列修改成1) */
 	public void deleteAll(Serializable[] ids){
